@@ -34,7 +34,7 @@ jobs:
           args: --release -i python${{ matrix.python-version }} --out dist
       - name: Upload wheels
         id: upload-macos-x86_64
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-macos-x86_64-${{ matrix.python-version }}
           path: dist
@@ -57,7 +57,7 @@ jobs:
           args: --release -i python${{ matrix.python-version }} --target universal2-apple-darwin --out dist
       - name: Upload wheels
         id: upload-macos-universal
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-macos-universal-${{ matrix.python-version }}
           path: dist
@@ -86,7 +86,7 @@ jobs:
           args: --release -i python${{ matrix.python-version }} -o dist
       - name: Upload wheels
         id: upload-linux
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-linux-${{ matrix.python-version }}-${{ matrix.target }}
           path: dist
@@ -124,7 +124,7 @@ jobs:
           args: --release -i python${{ matrix.python-version }} -o dist
       - name: Upload wheels
         id: upload-linux-cross
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-linux-cross-${{ matrix.python-version }}-${{ matrix.platform.target }}
           path: dist
@@ -152,7 +152,7 @@ jobs:
           args: --release -i python${{ matrix.python-version }} -o dist
       - name: Upload wheels
         id: upload-musllinux
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-musllinux-${{ matrix.python-version }}-${{ matrix.target }}
           path: dist
@@ -184,7 +184,7 @@ jobs:
           docker-options: ${{ matrix.platform.maturin_docker_options }}
       - name: Upload wheels
         id: upload-musllinux-cross
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-musllinux-cross-${{ matrix.python-version }}-${{ matrix.platform.target }}
           path: dist
@@ -215,7 +215,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: wheels-*
           path: wheels
