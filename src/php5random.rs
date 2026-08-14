@@ -297,11 +297,9 @@ mod tests {
     }
 
     #[test]
-    fn mt_seed_42_range_matches_neobot() {
-        // Mirrors neobot's `check_php_mt_rand` runtime check
-        // (scripts/check-runtime-deps.py), which asserts a real php5.6-cli
-        // binary's `mt_srand(42); mt_rand(0,23).",".mt_rand(0,59)` equals
-        // "15,47".
+    fn mt_seed_42_range() {
+        // Verified against a real php5.6-cli binary:
+        // mt_srand(42); mt_rand(0,23).",".mt_rand(0,59) === "15,47"
         let mut phpr = Php5MtRandom::new(42);
         assert_eq!(phpr.rand_range(0, 23), 15);
         assert_eq!(phpr.rand_range(0, 59), 47);
