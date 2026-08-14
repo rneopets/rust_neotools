@@ -4,7 +4,7 @@ use pyo3::{
     types::{PyDateAccess, PyDateTime},
 };
 
-use crate::php5random::Php5Random;
+use php5rand::Php5Random;
 
 #[pyclass]
 pub struct Symol;
