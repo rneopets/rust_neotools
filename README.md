@@ -181,6 +181,10 @@ cargo test
 pytest
 ```
 
+## Links
+
+- [php5rand](https://github.com/diceroll123/php5rand) - the PHP5 `rand()`/`srand()` and `mt_rand()`/`mt_srand()` reimplementations this project depends on
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
