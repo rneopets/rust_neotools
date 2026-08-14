@@ -29,3 +29,25 @@ class IslandMystic:
     ) -> datetime | None:
         """Brute forces all dates for the given username, for the language and step direction of time given."""
         ...
+
+class Php5Random:
+    """PHP5's `rand()`/`srand()` (on Linux, backed by glibc's `random()`)."""
+
+    def __init__(self, seed: int, /) -> None: ...
+    def rand(self) -> int:
+        """Returns the next random number in the sequence."""
+        ...
+    def rand_range(self, min: int, max: int, /) -> int:
+        """Returns the next random number in the sequence, scaled to the given range."""
+        ...
+
+class Php5MtRandom:
+    """PHP5's `mt_rand()`/`mt_srand()` (a genuine Mersenne Twister, MT19937)."""
+
+    def __init__(self, seed: int, /) -> None: ...
+    def rand(self) -> int:
+        """Returns the next random number in the sequence."""
+        ...
+    def rand_range(self, min: int, max: int, /) -> int:
+        """Returns the next random number in the sequence, scaled to the given range."""
+        ...

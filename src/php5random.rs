@@ -1,3 +1,5 @@
+use pyo3::prelude::*;
+
 pub struct Php5Random {
     r: Vec<u32>,
     k: usize,
@@ -49,28 +51,20 @@ impl Php5Random {
     }
 }
 
-// Not wired up to any caller yet - PyO3 bindings land in a follow-up change.
-#[allow(dead_code)]
 const MT_N: usize = 624;
-#[allow(dead_code)]
 const MT_M: usize = 397;
-#[allow(dead_code)]
 const MT_MATRIX_A: u32 = 0x9908b0df;
-#[allow(dead_code)]
 const MT_UPPER_MASK: u32 = 0x80000000;
-#[allow(dead_code)]
 const MT_LOWER_MASK: u32 = 0x7fffffff;
 
 /// PHP5's `mt_rand()`/`mt_srand()` - a genuine Mersenne Twister (MT19937),
 /// entirely separate from `Php5Random` above (which reimplements PHP5's
 /// plain `rand()`/`srand()`, backed on Linux by glibc's `random()`).
-#[allow(dead_code)]
 pub struct Php5MtRandom {
     mt: Vec<u32>,
     idx: usize,
 }
 
-#[allow(dead_code)]
 impl Php5MtRandom {
     pub fn new(seed: u32) -> Php5MtRandom {
         let mut mtr = Php5MtRandom {
@@ -135,6 +129,46 @@ impl Php5MtRandom {
     pub fn rand_range(&mut self, min: u32, max: u32) -> u32 {
         let n = self.rand();
         (min as f64 + ((max as f64 - min as f64 + 1.0) * (n as f64 / 2147483648_f64))) as u32
+    }
+}
+
+/// Python-exposed wrapper around `Php5Random` (PHP5's `rand()`/`srand()`).
+#[pyclass(name = "Php5Random")]
+pub struct PyPhp5Random(Php5Random);
+
+#[pymethods]
+impl PyPhp5Random {
+    #[new]
+    fn new(seed: u32) -> Self {
+        PyPhp5Random(Php5Random::new(seed))
+    }
+
+    fn rand(&mut self) -> u32 {
+        self.0.rand()
+    }
+
+    fn rand_range(&mut self, min: u32, max: u32) -> u32 {
+        self.0.rand_range(min, max)
+    }
+}
+
+/// Python-exposed wrapper around `Php5MtRandom` (PHP5's `mt_rand()`/`mt_srand()`).
+#[pyclass(name = "Php5MtRandom")]
+pub struct PyPhp5MtRandom(Php5MtRandom);
+
+#[pymethods]
+impl PyPhp5MtRandom {
+    #[new]
+    fn new(seed: u32) -> Self {
+        PyPhp5MtRandom(Php5MtRandom::new(seed))
+    }
+
+    fn rand(&mut self) -> u32 {
+        self.0.rand()
+    }
+
+    fn rand_range(&mut self, min: u32, max: u32) -> u32 {
+        self.0.rand_range(min, max)
     }
 }
 
