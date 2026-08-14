@@ -13,6 +13,7 @@ pyo3 = { version = "0.29.0", features = ["extension-module"] }
 itertools = "0.15.0"
 chrono = "0.4.38"
 rayon = "1.10.0"
+php5rand = { git = "https://github.com/diceroll123/php5rand" }
 
 [profile.release]
 lto = "fat"

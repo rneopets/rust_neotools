@@ -6,7 +6,7 @@ use pyo3::{
 };
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
-use crate::php5random::Php5Random;
+use php5rand::Php5Random;
 
 const CHARS: &str = "abcdefghijklmnopqrstuvwxyz_0123456789";
 
