@@ -49,20 +49,28 @@ impl Php5Random {
     }
 }
 
+// Not wired up to any caller yet - PyO3 bindings land in a follow-up change.
+#[allow(dead_code)]
 const MT_N: usize = 624;
+#[allow(dead_code)]
 const MT_M: usize = 397;
+#[allow(dead_code)]
 const MT_MATRIX_A: u32 = 0x9908b0df;
+#[allow(dead_code)]
 const MT_UPPER_MASK: u32 = 0x80000000;
+#[allow(dead_code)]
 const MT_LOWER_MASK: u32 = 0x7fffffff;
 
 /// PHP5's `mt_rand()`/`mt_srand()` - a genuine Mersenne Twister (MT19937),
 /// entirely separate from `Php5Random` above (which reimplements PHP5's
 /// plain `rand()`/`srand()`, backed on Linux by glibc's `random()`).
+#[allow(dead_code)]
 pub struct Php5MtRandom {
     mt: Vec<u32>,
     idx: usize,
 }
 
+#[allow(dead_code)]
 impl Php5MtRandom {
     pub fn new(seed: u32) -> Php5MtRandom {
         let mut mtr = Php5MtRandom {
