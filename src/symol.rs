@@ -1,8 +1,7 @@
 use chrono::{Datelike, NaiveDate};
-use pyo3::{
-    prelude::*,
-    types::{PyDateAccess, PyDateTime},
-};
+use pyo3::{prelude::*, types::PyDateTime};
+
+use crate::ymd;
 
 use php5rand::Php5Random;
 
@@ -35,12 +34,14 @@ impl Symol {
 #[pymethods]
 impl Symol {
     #[staticmethod]
-    fn get_minute(date: &Bound<PyDateTime>) -> i8 {
-        Symol::get_minute_rust(date.get_year(), date.get_month(), date.get_day())
+    fn get_minute(date: &Bound<PyDateTime>) -> PyResult<i8> {
+        let (year, month, day) = ymd(date)?;
+        Ok(Symol::get_minute_rust(year, month, day))
     }
     #[staticmethod]
-    fn get_window(date: &Bound<PyDateTime>) -> Vec<i8> {
-        Symol::get_window_rust(date.get_year(), date.get_month(), date.get_day())
+    fn get_window(date: &Bound<PyDateTime>) -> PyResult<Vec<i8>> {
+        let (year, month, day) = ymd(date)?;
+        Ok(Symol::get_window_rust(year, month, day))
     }
 }
 

@@ -1,12 +1,11 @@
 use chrono::{Datelike, NaiveDate};
 use itertools::iproduct;
-use pyo3::{
-    prelude::*,
-    types::{PyDateAccess, PyDateTime, PyTzInfoAccess},
-};
+use pyo3::{prelude::*, types::PyDateTime};
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use php5rand::Php5Random;
+
+use crate::ymd;
 
 const CHARS: &str = "abcdefghijklmnopqrstuvwxyz_0123456789";
 
@@ -163,22 +162,26 @@ impl IslandMystic {
 #[pymethods]
 impl IslandMystic {
     #[staticmethod]
-    pub fn check(dt: &Bound<PyDateTime>, username: &str) -> bool {
-        IslandMystic::check_rust(username, dt.get_year(), dt.get_month(), dt.get_day())
+    pub fn check(dt: &Bound<PyDateTime>, username: &str) -> PyResult<bool> {
+        let (year, month, day) = ymd(dt)?;
+        Ok(IslandMystic::check_rust(username, year, month, day))
     }
 
     #[staticmethod]
-    pub fn check_non_english(dt: &Bound<PyDateTime>, username: &str) -> bool {
-        IslandMystic::check_non_english_rust(username, dt.get_year(), dt.get_month(), dt.get_day())
+    pub fn check_non_english(dt: &Bound<PyDateTime>, username: &str) -> PyResult<bool> {
+        let (year, month, day) = ymd(dt)?;
+        Ok(IslandMystic::check_non_english_rust(
+            username, year, month, day,
+        ))
     }
 
     #[staticmethod]
-    pub fn brute_force_day(dt: &Bound<PyDateTime>, english: bool) -> Vec<String> {
-        let year = dt.get_year();
-        let month = dt.get_month();
-        let day = dt.get_day();
+    pub fn brute_force_day(dt: &Bound<PyDateTime>, english: bool) -> PyResult<Vec<String>> {
+        let (year, month, day) = ymd(dt)?;
 
-        IslandMystic::brute_force_day_rust(year, month, day, english)
+        Ok(IslandMystic::brute_force_day_rust(
+            year, month, day, english,
+        ))
     }
 
     #[staticmethod]
@@ -187,17 +190,16 @@ impl IslandMystic {
         username: &str,
         step: i64,
         english: bool,
-    ) -> Option<Bound<'a, PyDateTime>> {
-        let chrono_dt = IslandMystic::brute_force_user_rust(
-            username,
-            dt.get_year(),
-            dt.get_month(),
-            dt.get_day(),
-            step,
-            english,
-        );
+    ) -> PyResult<Option<Bound<'a, PyDateTime>>> {
+        let (year, month, day) = ymd(dt)?;
+        let chrono_dt =
+            IslandMystic::brute_force_user_rust(username, year, month, day, step, english);
 
         if let Some(finished) = chrono_dt {
+            let tzinfo = dt.getattr("tzinfo")?;
+            let tzinfo = (!tzinfo.is_none())
+                .then(|| tzinfo.cast_into())
+                .transpose()?;
             let new_dt = PyDateTime::new(
                 dt.py(),
                 finished.year(),
@@ -207,15 +209,15 @@ impl IslandMystic {
                 0,
                 0,
                 0,
-                dt.get_tzinfo().as_ref(),
+                tzinfo.as_ref(),
             );
 
             if let Ok(new_dt) = new_dt {
-                return Some(new_dt);
+                return Ok(Some(new_dt));
             }
         }
 
-        None
+        Ok(None)
     }
 }
 
